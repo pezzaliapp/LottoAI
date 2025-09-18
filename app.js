@@ -88,7 +88,7 @@ function generateFor(dateStr, name, dob, game) {
   });
 }
 
-// ---------------- Numerologia ----------------
+// ---------------- Numerologia (dettagliata) ----------------
 const PythMap = {
   A:1,B:2,C:3,D:4,E:5,F:6,G:7,H:8,I:9,
   J:1,K:2,L:3,M:4,N:5,O:6,P:7,Q:8,R:9,
@@ -114,7 +114,7 @@ function dayNumberFromDate(dob){
   return reduceNum(d);
 }
 function personalYear(dob, refISO){
-  const [y,m,d] = dob.split("-").map(Number);
+  const [,m,d] = dob.split("-").map(Number);
   const refY = Number(refISO.split("-")[0]);
   return reduceNum(sumDigits(d)+sumDigits(m)+sumDigits(refY));
 }
@@ -134,23 +134,82 @@ function personalityNumber(fullname){
   return reduceNum(total);
 }
 
-const meanings = {
-  1:"iniziativa, identità, guida",
-  2:"sensibilità, cooperazione, intuizione",
-  3:"espressione, creatività, socialità",
-  4:"ordine, metodo, concretezza",
-  5:"libertà, versatilità, esperienza",
-  6:"cura, responsabilità, equilibrio",
-  7:"ricerca, introspezione, apprendimento",
-  8:"azione, autonomia, saggezza pratica",
-  9:"visione, idealismo, responsabilità ampia",
-  11:"ispirazione, visione elevata",
-  22:"architetto, realizzazione su vasta scala"
+// Schede numeri principali: parola-chiave, punti di forza, rischi, consigli
+const CORE = {
+  1:{k:"Iniziativa • Identità • Guida",
+     plus:["Determinazione e autonomia","Leadership naturale","Capacità di avviare progetti"],
+     minus:["Impazienza, eccesso di controllo","Tendenza all’isolamento competitivo"],
+     tips:["Definisci la tua visione in 1 frase","Delega almeno un compito oggi","Celebra i micro-progressi"]},
+  2:{k:"Cooperazione • Sensibilità • Diplomazia",
+     plus:["Ascolto e mediazione","Intuito relazionale","Creazione di armonia"],
+     minus:["Troppa accondiscendenza","Evitamento del conflitto"],
+     tips:["Stabilisci confini chiari","Chiedi un feedback scritto","Impara a dire un ‘no’ gentile"]},
+  3:{k:"Espressione • Creatività • Socialità",
+     plus:["Comunicazione vivida","Talento narrativo","Entusiasmo contagioso"],
+     minus:["Discontinuità e dispersione","Sovraesposizione"],
+     tips:["Scrivi ogni giorno 1 pagina","Taglia il superfluo del 20%","Programma un momento creativo fisso"]},
+  4:{k:"Ordine • Metodo • Concretezza",
+     plus:["Affidabilità e disciplina","Pensiero sistemico","Resilienza"],
+     minus:["Rigidità, perfezionismo","Paura del cambiamento"],
+     tips:["Lavora per blocchi di tempo","Concentrati sull’essenziale prima","Introduci piccoli miglioramenti quotidiani"]},
+  5:{k:"Libertà • Versatilità • Esperienza",
+     plus:["Adattabilità rapida","Curiosità esplorativa","Energia dinamica"],
+     minus:["Dispersività, impulsività","Difficoltà a mantenere routine"],
+     tips:["Fai uno sprint di 5 giorni su un tema","Limita i canali di attenzione","Stabilisci una micro-routine quotidiana"]},
+  6:{k:"Cura • Responsabilità • Equilibrio",
+     plus:["Senso del dovere","Attenzione agli altri","Gusto estetico"],
+     minus:["Sovraccarico di compiti","Controllo affettivo"],
+     tips:["Ritagliati 15 min per te stesso","Chiedi supporto a chi ti è vicino","Cura un dettaglio estetico"]},
+  7:{k:"Ricerca • Introspezione • Apprendimento",
+     plus:["Analisi profonda","Pensiero critico","Indipendenza"],
+     minus:["Eccesso di astrazione","Chiusura sociale"],
+     tips:["Studia 30 min al giorno","Condividi 1 insight a settimana","Pratica silenzio e passeggiate"]},
+  8:{k:"Azione • Autonomia • Pragmatismo",
+     plus:["Focus sui risultati","Gestione delle risorse","Coraggio decisionale"],
+     minus:["Workaholism","Visione solo utilitaristica"],
+     tips:["Definisci obiettivi trimestrali","Stabilisci un orario di stop","Riconosci i meriti altrui"]},
+  9:{k:"Visione • Idealismo • Servizio",
+     plus:["Ampia prospettiva","Empatia","Capacità di chiudere cicli"],
+     minus:["Disillusione","Spreco di energie"],
+     tips:["Scegli 1 causa concreta","Definisci i confini del tuo impegno","Pratica il lasciare andare"]},
+  11:{k:"Ispirazione • Visione elevata (Numero Maestro)",
+     plus:["Intuizioni profonde","Carisma sottile","Creatività spirituale"],
+     minus:["Sovraccarico nervoso","Autodubbio"],
+     tips:["Pratica radicamento","Trasforma le intuizioni in azioni concrete","Cerca mentoring o confronto"]},
+  22:{k:"Architetto • Realizzazione su vasta scala (Numero Maestro)",
+     plus:["Visione + esecuzione","Capacità di costruire strutture solide","Leadership di sistema"],
+     minus:["Pressione interna","Blocco da perfezionismo"],
+     tips:["Dividi il progetto in tappe","Prototipa subito","Documenta le decisioni"]},
 };
 
-function describeCore(n, label){
-  const base = meanings[n] || "";
-  return `<strong>${label}:</strong> ${n} — ${base}.`;
+// Temi dell’Anno Personale
+const YEAR_THEME = {
+  1:"Nuovi inizi, energia di semina. Ottimo per lanciare progetti.",
+  2:"Relazioni e collaborazioni. Serve pazienza e ascolto.",
+  3:"Espressione e creatività. Ottimo per comunicare e farsi conoscere.",
+  4:"Struttura e fondamenta. È tempo di disciplina e organizzazione.",
+  5:"Cambiamenti e libertà. Occasioni di viaggio o sperimentazione.",
+  6:"Cura, casa, responsabilità. Consolidare e prendersi cura.",
+  7:"Studio, introspezione, ricerca. Momento di analisi.",
+  8:"Risultati e leadership. Focus su carriera e risorse.",
+  9:"Chiusure e rinnovamento. Tempo di lasciare andare e preparare il nuovo."
+};
+
+function profileCard(label, n){
+  const c = CORE[n] || {};
+  const tag = (n===11||n===22) ? `<em>${c.k||""}</em>` : (c.k||"");
+  const plus = (c.plus||[]).map(x=>`<li>${x}</li>`).join("");
+  const minus = (c.minus||[]).map(x=>`<li>${x}</li>`).join("");
+  const tips = (c.tips||[]).map(x=>`<li>${x}</li>`).join("");
+  return `
+    <div class="profile-section">
+      <h4>${label}: <span class="chip">${n}</span> — ${tag}</h4>
+      <div class="profile-cols">
+        <div><strong>Punti di forza</strong><ul>${plus}</ul></div>
+        <div><strong>Sfide</strong><ul>${minus}</ul></div>
+        <div><strong>Suggerimenti</strong><ul>${tips}</ul></div>
+      </div>
+    </div>`;
 }
 
 function renderProfile(fullname, dob, refISO){
@@ -161,139 +220,21 @@ function renderProfile(fullname, dob, refISO){
   const pe = personalityNumber(fullname);
   const py = personalYear(dob, refISO);
 
-  const lines = [
-    describeCore(lp, "Life Path"),
-    describeCore(ex, "Espressione"),
-    describeCore(su, "Anima"),
-    describeCore(pe, "Personalità"),
-    describeCore(dn, "Numero del Giorno"),
-    describeCore(py, "Anno Personale")
+  const blocks = [
+    profileCard("Life Path", lp),
+    profileCard("Espressione (Nome)", ex),
+    profileCard("Anima (Vocali)", su),
+    profileCard("Personalità (Consonanti)", pe),
+    profileCard("Numero del Giorno", dn),
+    `<div class="profile-section">
+       <h4>Anno Personale: <span class="chip">${py}</span></h4>
+       <p class="muted">${YEAR_THEME[py]||""}</p>
+     </div>`
   ];
-  profileText.innerHTML = lines.map(l=>`<p>${l}</p>`).join("");
+
+  profileText.innerHTML = blocks.join("");
   profileBox.hidden = false;
 }
-
-// ---------------- UI ----------------
-function renderCombination(out) {
-  titleOut.textContent = out.title;
-  numsBox.innerHTML = "";
-  out.main.forEach(n => {
-    const b = document.createElement("span");
-    b.className = "badge";
-    b.textContent = String(n).padStart(2,"0");
-    numsBox.appendChild(b);
-  });
-  extraBox.innerHTML = "";
-  out.extra.forEach(x => {
-    const wrap = document.createElement("span");
-    wrap.className = "badge";
-    wrap.dataset.variant = "accent";
-    wrap.textContent = `${x.label}: ${String(x.value).padStart(2,"0")}`;
-    extraBox.appendChild(wrap);
-  });
-  resultBox.hidden = false;
-
-  // Ritratto numerologico
-  const fullname = document.getElementById("name").value;
-  const dob = document.getElementById("dob").value;
-  const dateStr = refDate.value || formatDateInput(new Date());
-  if (fullname && dob) renderProfile(fullname, dob, dateStr);
-}
-
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
-  const name = document.getElementById("name").value;
-  const dob = document.getElementById("dob").value;
-  const game = document.getElementById("game").value;
-  const dateStr = refDate.value || formatDateInput(new Date());
-
-  if (!name || !dob) return;
-  const out = await generateFor(dateStr, name, dob, game);
-  renderCombination(out);
-});
-
-copyBtn.addEventListener("click", async () => {
-  const texts = Array.from(numsBox.querySelectorAll(".badge")).map(b=>b.textContent).join(" ");
-  const extras = Array.from(extraBox.querySelectorAll(".badge")).map(b=>b.textContent).join(" ");
-  const full = [titleOut.textContent, texts, extras].filter(Boolean).join("\n");
-  try {
-    await navigator.clipboard.writeText(full);
-    copyBtn.textContent = "Copiato!";
-    setTimeout(()=>copyBtn.textContent="Copia",1200);
-  } catch {
-    alert(full);
-  }
-});
-
-saveBtn.addEventListener("click", () => {
-  const items = JSON.parse(localStorage.getItem("lottoai_history")||"[]");
-  const entry = {
-    title: titleOut.textContent,
-    numbers: Array.from(numsBox.querySelectorAll(".badge")).map(b=>b.textContent),
-    extras: Array.from(extraBox.querySelectorAll(".badge")).map(b=>b.textContent),
-    ts: Date.now()
-  };
-  items.unshift(entry);
-  localStorage.setItem("lottoai_history", JSON.stringify(items));
-  paintHistory();
-});
-
-function paintHistory() {
-  historyBox.innerHTML = "";
-  const items = JSON.parse(localStorage.getItem("lottoai_history")||"[]");
-  if (items.length === 0) {
-    historyBox.innerHTML = `<p class="muted">Nessuna voce salvata.</p>`;
-    return;
-  }
-  items.forEach((it, idx) => {
-    const div = document.createElement("div");
-    div.className = "hist-item";
-    const left = document.createElement("div");
-    left.innerHTML = `<strong>${it.title}</strong><br><span class="muted">${it.numbers.join(" ")}${it.extras.length? " • "+it.extras.join(" • "):""}</span>`;
-    const right = document.createElement("div");
-    const del = document.createElement("button");
-    del.textContent = "Elimina";
-    del.addEventListener("click", () => {
-      const arr = JSON.parse(localStorage.getItem("lottoai_history")||"[]");
-      arr.splice(idx,1);
-      localStorage.setItem("lottoai_history", JSON.stringify(arr));
-      paintHistory();
-    });
-    right.appendChild(del);
-    div.append(left, right);
-    historyBox.appendChild(div);
-  });
-}
-
-exportBtn.addEventListener("click", () => {
-  const data = localStorage.getItem("lottoai_history") || "[]";
-  const blob = new Blob([data], {type:"application/json"});
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "lottoai_history.json";
-  a.click();
-  URL.revokeObjectURL(url);
-});
-
-clearBtn.addEventListener("click", () => {
-  if (confirm("Sicuro di svuotare lo storico locale?")) {
-    localStorage.removeItem("lottoai_history");
-    paintHistory();
-  }
-});
-
-shareBtn.addEventListener("click", async () => {
-  const url = location.href;
-  const text = "LottoAI — PWA open source per generare combinazioni personali e profilo numerologico (solo divertimento).";
-  if (navigator.share) {
-    try { await navigator.share({title:"LottoAI", text, url}); } catch {}
-  } else {
-    await navigator.clipboard.writeText(`${text} ${url}`);
-    shareBtn.textContent = "Link copiato";
-    setTimeout(()=>shareBtn.textContent="Condividi",1200);
-  }
-});
 
 // init
 paintHistory();
