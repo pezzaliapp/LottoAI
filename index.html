@@ -38,14 +38,15 @@
     <section class="card">
       <h2>Numeri “personali” del giorno</h2>
       <p class="muted">
-        Inserisci nome e data di nascita. L’algoritmo genera sempre gli stessi numeri per la data di oggi,
+        Inserisci il tuo nome e cognome con la data di nascita.
+        L’algoritmo genera sempre gli stessi numeri per la data di oggi,
         in base ai tuoi dati. <strong>Solo per intrattenimento.</strong>
       </p>
 
       <form id="form">
         <div class="row">
-          <label for="name">Nome o nickname</label>
-          <input id="name" name="name" type="text" placeholder="Es. Alessandro" required />
+          <label for="name">Nome e Cognome (per numerologia)</label>
+          <input id="name" name="name" type="text" placeholder="Es. Alessandro Pezzali" required />
         </div>
 
         <div class="row">
@@ -76,6 +77,12 @@
           <button id="copyBtn">Copia</button>
           <button id="saveBtn">Salva in storico</button>
         </div>
+      </div>
+
+      <!-- NUOVO blocco: Ritratto Numerologico -->
+      <div id="profile" class="result" hidden>
+        <h3>Ritratto Numerologico</h3>
+        <div id="profileText" class="muted"></div>
       </div>
     </section>
 
