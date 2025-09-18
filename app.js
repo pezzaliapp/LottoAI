@@ -83,7 +83,10 @@ function generateFor(dateStr, name, dob, game) {
       let jolly;
       do { jolly = Math.floor(rand()*90)+1; } while (main.includes(jolly));
       const superstar = Math.floor(rand()*90)+1;
-      return { title: `SuperEnalotto — ${dateStr}`, main, extra: [{label:"Jolly", value:jolly},{label:"Superstar", value:superstar}] };
+      return { title: `SuperEnalotto — ${dateStr}`, main, extra: [
+        {label:"Jolly", value:jolly},
+        {label:"Superstar", value:superstar}
+      ] };
     }
   });
 }
@@ -91,19 +94,25 @@ function generateFor(dateStr, name, dob, game) {
 function renderCombination(out) {
   titleOut.textContent = out.title;
   numsBox.innerHTML = "";
+
+  // numeri principali
   out.main.forEach(n => {
     const b = document.createElement("span");
     b.className = "badge";
     b.textContent = String(n).padStart(2,"0");
     numsBox.appendChild(b);
   });
+
+  // numeri extra evidenziati
   extraBox.innerHTML = "";
   out.extra.forEach(x => {
     const wrap = document.createElement("span");
     wrap.className = "badge";
+    wrap.dataset.variant = "accent";   // evidenzia Jolly / Superstar
     wrap.textContent = `${x.label}: ${String(x.value).padStart(2,"0")}`;
     extraBox.appendChild(wrap);
   });
+
   resultBox.hidden = false;
 }
 
