@@ -236,6 +236,52 @@ function renderProfile(fullname, dob, refISO){
   profileBox.hidden = false;
 }
 
+// ---------------- UI ----------------
+function renderCombination(out) {
+  titleOut.textContent = out.title;
+  numsBox.innerHTML = "";
+
+  // numeri principali
+  out.main.forEach(n => {
+    const b = document.createElement("span");
+    b.className = "badge";
+    b.textContent = String(n).padStart(2,"0");
+    numsBox.appendChild(b);
+  });
+
+  // numeri extra evidenziati
+  extraBox.innerHTML = "";
+  out.extra.forEach(x => {
+    const wrap = document.createElement("span");
+    wrap.className = "badge";
+    wrap.dataset.variant = "accent";
+    wrap.textContent = `${x.label}: ${String(x.value).padStart(2,"0")}`;
+    extraBox.appendChild(wrap);
+  });
+
+  resultBox.hidden = false;
+
+  // Ritratto numerologico
+  const fullname = document.getElementById("name").value;
+  const dob = document.getElementById("dob").value;
+  const dateStr = refDate.value || formatDateInput(new Date());
+  if (fullname && dob) {
+    renderProfile(fullname, dob, dateStr);
+  }
+}
+
+form.addEventListener("submit", async (e) => {
+  e.preventDefault();
+  const name = document.getElementById("name").value;
+  const dob = document.getElementById("dob").value;
+  const game = document.getElementById("game").value;
+  const dateStr = refDate.value || formatDateInput(new Date());
+
+  if (!name || !dob) return;
+  const out = await generateFor(dateStr, name, dob, game);
+  renderCombination(out);
+});
+
 // init
 paintHistory();
 todayBtn.click();
