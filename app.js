@@ -222,9 +222,9 @@ function renderProfile(fullname, dob, refISO){
 
   const blocks = [
     profileCard("Life Path", lp),
-    profileCard("Espressione (Nome)", ex),
-    profileCard("Anima (Vocali)", su),
-    profileCard("Personalità (Consonanti)", pe),
+    profileCard("Espressione (Nome completo)", ex),
+    profileCard("Anima (Calcolata dalle vocali)", su),
+    profileCard("Personalità (Calcolata dalle consonanti)", pe),
     profileCard("Numero del Giorno", dn),
     `<div class="profile-section">
        <h4>Anno Personale: <span class="chip">${py}</span></h4>
