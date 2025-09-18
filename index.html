@@ -4,24 +4,31 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>LottoAI — Generatore Giornaliero</title>
-  <meta name="description" content="LottoAI: app PWA che genera, in modo deterministico e personale, combinazioni per Lotto e SuperEnalotto. Solo per intrattenimento." />
-  <link rel="manifest" href="manifest.json">
-  <link rel="icon" href="icons/icon-192.png">
+  <meta name="description" content="LottoAI: PWA che genera, in modo deterministico e personale, combinazioni per Lotto e SuperEnalotto. Solo per intrattenimento." />
+
+  <!-- PWA -->
+  <link rel="manifest" href="manifest.json" />
   <meta name="theme-color" content="#0b5fff" />
-  <link rel="stylesheet" href="style.css">
+
+  <!-- Icone -->
+  <link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" sizes="192x192" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" sizes="512x512" href="icons/icon-512.png" />
+
+  <!-- Stili -->
+  <link rel="stylesheet" href="style.css" />
+
+  <!-- Service Worker -->
   <script>
-    // PWA install
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('service-worker.js');
-      });
+    if ("serviceWorker" in navigator) {
+      addEventListener("load", () => navigator.serviceWorker.register("service-worker.js"));
     }
   </script>
 </head>
 <body>
   <header class="appbar">
     <div class="brand">
-      <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor" opacity="0.1"/><path d="M4 12a8 8 0 1 0 16 0" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>
+      <img src="icons/icon-192.png" alt="Logo LottoAI" class="logo" />
       <h1>LottoAI</h1>
     </div>
     <button id="shareBtn" class="ghost" title="Condividi">Condividi</button>
@@ -30,17 +37,20 @@
   <main class="container">
     <section class="card">
       <h2>Numeri “personali” del giorno</h2>
-      <p class="muted">Inserisci nome e data di nascita. L’algoritmo genera sempre gli stessi numeri per la data di oggi, in base ai tuoi dati. <strong>Solo per intrattenimento.</strong></p>
+      <p class="muted">
+        Inserisci nome e data di nascita. L’algoritmo genera sempre gli stessi numeri per la data di oggi,
+        in base ai tuoi dati. <strong>Solo per intrattenimento.</strong>
+      </p>
 
       <form id="form">
         <div class="row">
           <label for="name">Nome o nickname</label>
-          <input id="name" name="name" type="text" placeholder="Es. Alessandro" required>
+          <input id="name" name="name" type="text" placeholder="Es. Alessandro" required />
         </div>
 
         <div class="row">
           <label for="dob">Data di nascita</label>
-          <input id="dob" name="dob" type="date" required>
+          <input id="dob" name="dob" type="date" required />
         </div>
 
         <div class="row">
@@ -54,7 +64,7 @@
         <div class="row inline">
           <button type="submit" class="primary">Genera numeri</button>
           <button type="button" id="todayBtn">Oggi</button>
-          <input type="date" id="refdate" aria-label="Data di riferimento">
+          <input type="date" id="refdate" aria-label="Data di riferimento" />
         </div>
       </form>
 
@@ -89,7 +99,7 @@
   </main>
 
   <footer class="footer">
-    <p>© 2025 LottoAI — Open source • PWA • Offline‑ready</p>
+    <p>© 2025 LottoAI — Open source • PWA • Offline-ready</p>
   </footer>
 
   <script src="app.js"></script>
