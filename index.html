@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>LottoAI — Generatore Giornaliero</title>
+  <meta name="description" content="LottoAI: app PWA che genera, in modo deterministico e personale, combinazioni per Lotto e SuperEnalotto. Solo per intrattenimento." />
+  <link rel="manifest" href="manifest.json">
+  <link rel="icon" href="icons/icon-192.png">
+  <meta name="theme-color" content="#0b5fff" />
+  <link rel="stylesheet" href="style.css">
+  <script>
+    // PWA install
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('service-worker.js');
+      });
+    }
+  </script>
+</head>
+<body>
+  <header class="appbar">
+    <div class="brand">
+      <svg width="28" height="28" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor" opacity="0.1"/><path d="M4 12a8 8 0 1 0 16 0" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>
+      <h1>LottoAI</h1>
+    </div>
+    <button id="shareBtn" class="ghost" title="Condividi">Condividi</button>
+  </header>
+
+  <main class="container">
+    <section class="card">
+      <h2>Numeri “personali” del giorno</h2>
+      <p class="muted">Inserisci nome e data di nascita. L’algoritmo genera sempre gli stessi numeri per la data di oggi, in base ai tuoi dati. <strong>Solo per intrattenimento.</strong></p>
+
+      <form id="form">
+        <div class="row">
+          <label for="name">Nome o nickname</label>
+          <input id="name" name="name" type="text" placeholder="Es. Alessandro" required>
+        </div>
+
+        <div class="row">
+          <label for="dob">Data di nascita</label>
+          <input id="dob" name="dob" type="date" required>
+        </div>
+
+        <div class="row">
+          <label for="game">Gioco</label>
+          <select id="game" name="game">
+            <option value="lotto">Lotto (5 su 90)</option>
+            <option value="super">SuperEnalotto (6 su 90 + Jolly + Superstar)</option>
+          </select>
+        </div>
+
+        <div class="row inline">
+          <button type="submit" class="primary">Genera numeri</button>
+          <button type="button" id="todayBtn">Oggi</button>
+          <input type="date" id="refdate" aria-label="Data di riferimento">
+        </div>
+      </form>
+
+      <div id="result" class="result" hidden>
+        <h3 id="titleOut"></h3>
+        <div id="nums" class="nums"></div>
+        <div id="extra" class="extra"></div>
+        <div class="actions">
+          <button id="copyBtn">Copia</button>
+          <button id="saveBtn">Salva in storico</button>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Storico locale</h2>
+      <p class="muted">Le combinazioni salvate restano sul tuo dispositivo (localStorage). Nessun server.</p>
+      <div id="history" class="history"></div>
+      <div class="actions">
+        <button id="exportBtn">Esporta JSON</button>
+        <button id="clearBtn" class="danger">Svuota storico</button>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Nota importante</h2>
+      <p class="muted">
+        LottoAI non prevede né promette vincite. I numeri sono generati in modo deterministico usando i tuoi dati e la data selezionata.
+        È uno strumento ludico-sperimentale. Gioca responsabilmente.
+      </p>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <p>© 2025 LottoAI — Open source • PWA • Offline‑ready</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
