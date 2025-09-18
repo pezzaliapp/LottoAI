@@ -1,6 +1,6 @@
 // LottoAI — app.js
 // Generatore deterministico “personale” di combinazioni per Lotto e SuperEnalotto.
-// Solo per intrattenimento. Nessun server: tutto in locale.
+// Con Ritratto Numerologico (pitagorico). Solo per intrattenimento. Nessun server: tutto in locale.
 
 const $ = (sel) => document.querySelector(sel);
 
@@ -17,6 +17,8 @@ const historyBox = $("#history");
 const refDate = $("#refdate");
 const todayBtn = $("#todayBtn");
 const shareBtn = $("#shareBtn");
+const profileBox = $("#profile");
+const profileText = $("#profileText");
 
 todayBtn.addEventListener("click", () => {
   const today = new Date();
@@ -30,7 +32,7 @@ function formatDateInput(d) {
   return `${yyyy}-${mm}-${dd}`;
 }
 
-// Basic seeded PRNG (xorshift32) from a 32-bit seed
+// ---------------- PRNG Lotto ----------------
 function xorshift32(seed) {
   let x = seed >>> 0;
   return () => {
@@ -41,15 +43,12 @@ function xorshift32(seed) {
   };
 }
 
-// Convert ArrayBuffer hash -> 32-bit seed
 function hashToSeed(buf) {
   const view = new DataView(buf);
-  // XOR chunks into a 32-bit number
   let s = 0;
   for (let i = 0; i < view.byteLength; i += 4) {
     s ^= view.getUint32(i % (view.byteLength-3), false);
   }
-  // Avoid zero seed
   return (s >>> 0) || 0x9e3779b9;
 }
 
@@ -68,7 +67,6 @@ function pickUnique(rand, count, min, max) {
   return Array.from(set).sort((a,b)=>a-b);
 }
 
-// Superstar: 1..90 (indipendente), Jolly: 1..90 diverso dai 6 principali
 function generateFor(dateStr, name, dob, game) {
   const key = `${name.trim().toLowerCase()}|${dob}|${dateStr}|${game}`;
   return sha256(key).then(buf => {
@@ -79,7 +77,6 @@ function generateFor(dateStr, name, dob, game) {
       return { title: `Lotto — ${dateStr}`, main, extra: [] };
     } else {
       const main = pickUnique(rand, 6, 1, 90);
-      // Jolly different from main
       let jolly;
       do { jolly = Math.floor(rand()*90)+1; } while (main.includes(jolly));
       const superstar = Math.floor(rand()*90)+1;
@@ -91,29 +88,116 @@ function generateFor(dateStr, name, dob, game) {
   });
 }
 
+// ---------------- Numerologia ----------------
+const PythMap = {
+  A:1,B:2,C:3,D:4,E:5,F:6,G:7,H:8,I:9,
+  J:1,K:2,L:3,M:4,N:5,O:6,P:7,Q:8,R:9,
+  S:1,T:2,U:3,V:4,W:5,X:6,Y:7,Z:8
+};
+const VOWELS = new Set(["A","E","I","O","U","Y"]);
+
+function onlyLetters(s){ return (s||"").toUpperCase().normalize("NFD").replace(/[^A-Z]/g,""); }
+function sumDigits(n){ return String(n).split("").reduce((a,c)=>a+Number(c),0); }
+function reduceNum(n){
+  while (n > 22) n = sumDigits(n);
+  if (n === 11 || n === 22) return n;
+  while (n > 9) n = sumDigits(n);
+  return n;
+}
+
+function lifePathFromDate(dob){
+  const [y,m,d] = dob.split("-").map(Number);
+  return reduceNum(sumDigits(y)+sumDigits(m)+sumDigits(d));
+}
+function dayNumberFromDate(dob){
+  const d = Number(dob.split("-")[2]);
+  return reduceNum(d);
+}
+function personalYear(dob, refISO){
+  const [y,m,d] = dob.split("-").map(Number);
+  const refY = Number(refISO.split("-")[0]);
+  return reduceNum(sumDigits(d)+sumDigits(m)+sumDigits(refY));
+}
+function expressionNumber(fullname){
+  const letters = onlyLetters(fullname);
+  const total = [...letters].reduce((a,c)=>a+(PythMap[c]||0),0);
+  return reduceNum(total);
+}
+function soulUrgeNumber(fullname){
+  const letters = onlyLetters(fullname);
+  const total = [...letters].filter(ch=>VOWELS.has(ch)).reduce((a,c)=>a+(PythMap[c]||0),0);
+  return reduceNum(total);
+}
+function personalityNumber(fullname){
+  const letters = onlyLetters(fullname);
+  const total = [...letters].filter(ch=>!VOWELS.has(ch)).reduce((a,c)=>a+(PythMap[c]||0),0);
+  return reduceNum(total);
+}
+
+const meanings = {
+  1:"iniziativa, identità, guida",
+  2:"sensibilità, cooperazione, intuizione",
+  3:"espressione, creatività, socialità",
+  4:"ordine, metodo, concretezza",
+  5:"libertà, versatilità, esperienza",
+  6:"cura, responsabilità, equilibrio",
+  7:"ricerca, introspezione, apprendimento",
+  8:"azione, autonomia, saggezza pratica",
+  9:"visione, idealismo, responsabilità ampia",
+  11:"ispirazione, visione elevata",
+  22:"architetto, realizzazione su vasta scala"
+};
+
+function describeCore(n, label){
+  const base = meanings[n] || "";
+  return `<strong>${label}:</strong> ${n} — ${base}.`;
+}
+
+function renderProfile(fullname, dob, refISO){
+  const lp = lifePathFromDate(dob);
+  const dn = dayNumberFromDate(dob);
+  const ex = expressionNumber(fullname);
+  const su = soulUrgeNumber(fullname);
+  const pe = personalityNumber(fullname);
+  const py = personalYear(dob, refISO);
+
+  const lines = [
+    describeCore(lp, "Life Path"),
+    describeCore(ex, "Espressione"),
+    describeCore(su, "Anima"),
+    describeCore(pe, "Personalità"),
+    describeCore(dn, "Numero del Giorno"),
+    describeCore(py, "Anno Personale")
+  ];
+  profileText.innerHTML = lines.map(l=>`<p>${l}</p>`).join("");
+  profileBox.hidden = false;
+}
+
+// ---------------- UI ----------------
 function renderCombination(out) {
   titleOut.textContent = out.title;
   numsBox.innerHTML = "";
-
-  // numeri principali
   out.main.forEach(n => {
     const b = document.createElement("span");
     b.className = "badge";
     b.textContent = String(n).padStart(2,"0");
     numsBox.appendChild(b);
   });
-
-  // numeri extra evidenziati
   extraBox.innerHTML = "";
   out.extra.forEach(x => {
     const wrap = document.createElement("span");
     wrap.className = "badge";
-    wrap.dataset.variant = "accent";   // evidenzia Jolly / Superstar
+    wrap.dataset.variant = "accent";
     wrap.textContent = `${x.label}: ${String(x.value).padStart(2,"0")}`;
     extraBox.appendChild(wrap);
   });
-
   resultBox.hidden = false;
+
+  // Ritratto numerologico
+  const fullname = document.getElementById("name").value;
+  const dob = document.getElementById("dob").value;
+  const dateStr = refDate.value || formatDateInput(new Date());
+  if (fullname && dob) renderProfile(fullname, dob, dateStr);
 }
 
 form.addEventListener("submit", async (e) => {
@@ -201,7 +285,7 @@ clearBtn.addEventListener("click", () => {
 
 shareBtn.addEventListener("click", async () => {
   const url = location.href;
-  const text = "LottoAI — PWA open source per generare combinazioni personali (solo per divertimento).";
+  const text = "LottoAI — PWA open source per generare combinazioni personali e profilo numerologico (solo divertimento).";
   if (navigator.share) {
     try { await navigator.share({title:"LottoAI", text, url}); } catch {}
   } else {
