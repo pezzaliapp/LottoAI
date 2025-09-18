@@ -1,29 +1,51 @@
 *{box-sizing:border-box}
 :root{
   --brand:#0b5fff;
+  --brand-2:#5aa3ff;
   --bg:#0c1116;
   --card:#111927;
   --muted:#9aa4af;
   --text:#e5e7eb;
   --danger:#d12b3f;
+  --field:#0b1220;
+  --ring:rgba(11,95,255,.45);
 }
+@media (prefers-color-scheme: light){
+  :root{
+    --bg:#f6f8fb; --card:#ffffff; --text:#0b1220; --muted:#566173;
+    --field:#f2f5fb; --ring:rgba(11,95,255,.35);
+  }
+}
+
 html,body{height:100%}
 body{
   margin:0;
   font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;
   color:var(--text);
-  background:radial-gradient(1200px 600px at 10% -20%, #153a9b 0%, #0c1116 50%) no-repeat, var(--bg);
+  background:
+    radial-gradient(1200px 600px at 10% -20%, rgba(21,58,155,.35) 0%, rgba(12,17,22,0) 55%) no-repeat,
+    var(--bg);
+  -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
 }
+
+/* Appbar */
 .appbar{
   position:sticky;top:0;z-index:10;
   display:flex;align-items:center;justify-content:space-between;
   padding:12px 16px;
-  background:rgba(12,17,22,.7);backdrop-filter:blur(8px);
-  border-bottom:1px solid rgba(255,255,255,.06)
+  background:rgba(12,17,22,.7);
+  backdrop-filter:blur(8px);
+  border-bottom:1px solid rgba(255,255,255,.06);
 }
 .brand{display:flex;align-items:center;gap:10px}
+.logo{width:28px;height:28px;border-radius:6px;display:block}
 h1{font-size:1.1rem;margin:0}
-.container{max-width:920px;margin:24px auto;padding:0 16px;display:grid;gap:16px}
+
+/* Layout */
+.container{
+  max-width:920px;margin:24px auto;padding:0 16px;
+  display:grid;gap:16px
+}
 .card{
   background:linear-gradient(180deg, rgba(255,255,255,.06), rgba(255,255,255,.02));
   border:1px solid rgba(255,255,255,.08);
@@ -32,28 +54,54 @@ h1{font-size:1.1rem;margin:0}
 }
 h2{margin:0 0 8px 0;font-size:1.05rem}
 .muted{color:var(--muted);margin:8px 0 16px 0}
+
+/* Form */
 .row{display:flex;flex-direction:column;gap:8px;margin:10px 0}
 .row.inline{flex-direction:row;flex-wrap:wrap;align-items:center;gap:8px}
 input,select,button{
   font:inherit;border-radius:10px;border:1px solid rgba(255,255,255,.15);
-  padding:10px 12px;background:#0b1220;color:var(--text);
+  padding:10px 12px;background:var(--field);color:var(--text);
+  transition:box-shadow .15s ease, border-color .15s ease, transform .02s ease;
 }
+input:focus,select:focus,button:focus{outline:none;box-shadow:0 0 0 3px var(--ring);border-color:transparent}
 button{cursor:pointer}
-button.primary{background:var(--brand);border-color:transparent}
+button:hover{filter:brightness(1.04)}
+button:active{transform:translateY(1px)}
+button.primary{background:var(--brand);border-color:transparent;color:#fff}
+button.primary:hover{background:var(--brand-2)}
 button.ghost{background:transparent}
-button.danger{background:var(--danger);border-color:transparent}
+button.danger{background:var(--danger);border-color:transparent;color:#fff}
 button:disabled{opacity:.6;cursor:not-allowed}
+
+/* Output numeri */
 .result{margin-top:16px}
 .nums{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
 .badge{
   display:inline-flex;align-items:center;justify-content:center;
-  min-width:42px;padding:10px 12px;border-radius:999px;
-  border:1px dashed rgba(255,255,255,.25);background:#0d1626;font-weight:700
+  min-width:42px;padding:10px 12px;border-radius:999px;font-weight:700;
+  border:1px dashed rgba(255,255,255,.25);background:#0d1626;
+}
+.badge[data-variant="accent"]{
+  border-style:solid;border-color:var(--brand);background:rgba(11,95,255,.12)
 }
 .extra{margin-top:8px;display:flex;gap:10px;align-items:center}
+
+/* Storico */
 .history{display:grid;gap:8px}
 .hist-item{
   display:flex;align-items:center;justify-content:space-between;gap:10px;
   padding:10px 12px;border:1px solid rgba(255,255,255,.1);border-radius:10px;background:#0a1322
 }
-.footer{max-width:920px;margin:24px auto;padding:0 16px;color:var(--muted);font-size:.9rem}
+
+/* Footer */
+.footer{
+  max-width:920px;margin:24px auto;padding:0 16px;
+  color:var(--muted);font-size:.9rem
+}
+
+/* Piccola responsività */
+@media (max-width:560px){
+  .row.inline{flex-direction:column;align-items:stretch}
+  .appbar{padding:10px 12px}
+  .logo{width:24px;height:24px}
+}
