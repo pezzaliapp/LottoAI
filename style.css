@@ -79,12 +79,23 @@ button:disabled{opacity:.6;cursor:not-allowed}
 .badge{
   display:inline-flex;align-items:center;justify-content:center;
   min-width:42px;padding:10px 12px;border-radius:999px;font-weight:700;
-  border:1px dashed rgba(255,255,255,.25);background:#0d1626;
+  border:1px dashed rgba(255,255,255,.25);
+  background:#0d1626;
+  color:#fff; /* testo leggibile in dark */
 }
 .badge[data-variant="accent"]{
   border-style:solid;border-color:var(--brand);background:rgba(11,95,255,.12)
 }
 .extra{margin-top:8px;display:flex;gap:10px;align-items:center}
+
+/* Light mode correzione badge */
+@media (prefers-color-scheme: light){
+  .badge{
+    background:#e5e7eb;   /* grigio chiaro */
+    border:1px dashed rgba(0,0,0,.25);
+    color:#0b1220;        /* testo scuro leggibile */
+  }
+}
 
 /* Storico */
 .history{display:grid;gap:8px}
@@ -93,30 +104,19 @@ button:disabled{opacity:.6;cursor:not-allowed}
   padding:10px 12px;border:1px solid rgba(255,255,255,.1);border-radius:10px;background:#0a1322
 }
 
-/* Ritratto numerologico */
-.profile-section{
-  margin-top:16px;
-  padding:12px;
-  border:1px solid rgba(255,255,255,.08);
-  border-radius:12px;
-  background:rgba(255,255,255,.03)
-}
-.profile-section h4{margin:0 0 8px 0;font-size:1rem}
-.profile-cols{display:grid;gap:8px}
-.profile-cols ul{margin:6px 0 0 18px}
-.chip{
-  display:inline-block;min-width:28px;padding:2px 8px;border-radius:999px;
-  background:rgba(11,95,255,.14);border:1px solid rgba(11,95,255,.3)
-}
-@media (min-width:760px){
-  .profile-cols{grid-template-columns:1fr 1fr 1fr}
-}
-
 /* Footer */
 .footer{
   max-width:920px;margin:24px auto;padding:0 16px;
   color:var(--muted);font-size:.9rem
 }
+
+/* Profilo numerologico */
+.profile-section{margin-top:16px;padding:12px;border:1px solid rgba(255,255,255,.08);border-radius:12px;background:rgba(255,255,255,.03)}
+.profile-section h4{margin:0 0 8px 0;font-size:1rem}
+.profile-cols{display:grid;gap:8px}
+.profile-cols ul{margin:6px 0 0 18px}
+.chip{display:inline-block;min-width:28px;padding:2px 8px;border-radius:999px;background:rgba(11,95,255,.14);border:1px solid rgba(11,95,255,.3)}
+@media (min-width:760px){ .profile-cols{grid-template-columns:1fr 1fr 1fr} }
 
 /* Piccola responsività */
 @media (max-width:560px){
