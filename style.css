@@ -124,3 +124,15 @@ button:disabled{opacity:.6;cursor:not-allowed}
   .appbar{padding:10px 12px}
   .logo{width:24px;height:24px}
 }
+/* Evidenza per Numeri Maestri 11/22 */
+.chip--master{
+  background: linear-gradient(180deg, rgba(255,215,0,.18), rgba(255,215,0,.10));
+  border:1px solid rgba(255,215,0,.55);
+  box-shadow: 0 0 0 1px rgba(255,215,0,.15), 0 6px 18px rgba(255,215,0,.10) inset;
+  color:#fff; /* in light mode il testo resta scuro grazie a :root */
+}
+@media (prefers-color-scheme: light){
+  .chip--master{
+    color:#3a2c00;
+  }
+}
