@@ -219,13 +219,16 @@ const YEAR_THEME = {
 
 function profileCard(label, n){
   const c = CORE[n] || {};
-  const tag = (n===11||n===22) ? `<em>${c.k||""}</em>` : (c.k||"");
+  const isMaster = (n===11 || n===22);
+  const chipClass = `chip${isMaster ? ' chip--master' : ''}`;
+  const tag = isMaster ? `<em>${c.k||""}</em>` : (c.k||"");
   const plus = (c.plus||[]).map(x=>`<li>${x}</li>`).join("");
   const minus = (c.minus||[]).map(x=>`<li>${x}</li>`).join("");
   const tips = (c.tips||[]).map(x=>`<li>${x}</li>`).join("");
+
   return `
     <div class="profile-section">
-      <h4>${label}: <span class="chip">${n}</span> — ${tag}</h4>
+      <h4>${label}: <span class="${chipClass}">${n}</span> — ${tag}</h4>
       <div class="profile-cols">
         <div><strong>Punti di forza</strong><ul>${plus}</ul></div>
         <div><strong>Sfide</strong><ul>${minus}</ul></div>
@@ -233,7 +236,6 @@ function profileCard(label, n){
       </div>
     </div>`;
 }
-
 function renderProfile(fullname, dob, refISO){
   const lp = lifePathFromDate(dob);
   const dn = dayNumberFromDate(dob);
