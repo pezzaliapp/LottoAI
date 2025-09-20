@@ -256,8 +256,11 @@ function renderProfile(fullname, dob, refISO){
      </div>`
   ];
 
-  profileText.innerHTML = blocks.join("");
-  profileBox.hidden = false;
+  profileText.innerHTML = blocks.join("") +
+  `<p class="muted" style="margin-top:8px">
+    <span class="chip chip--master">11 / 22</span> = Numeri Maestri (energia più intensa).
+  </p>`;
+profileBox.hidden = false;
 }
 
 // ---------------- UI ----------------
