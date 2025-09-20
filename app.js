@@ -164,28 +164,66 @@ function personalityNumber(fullname){
   return reduceNum(total);
 }
 
-// Schede numeri principali
-const CORE = { /* ... come nel tuo file, invariato ... */ };
+// Schede numeri principali: parola-chiave, punti di forza, rischi, consigli
+const CORE = {
+  1:{k:"Iniziativa • Identità • Guida",
+     plus:["Determinazione e autonomia","Leadership naturale","Capacità di avviare progetti"],
+     minus:["Impazienza, eccesso di controllo","Tendenza all’isolamento competitivo"],
+     tips:["Definisci la tua visione in 1 frase","Delega almeno un compito oggi","Celebra i micro-progressi"]},
+  2:{k:"Cooperazione • Sensibilità • Diplomazia",
+     plus:["Ascolto e mediazione","Intuito relazionale","Creazione di armonia"],
+     minus:["Troppa accondiscendenza","Evitamento del conflitto"],
+     tips:["Stabilisci confini chiari","Chiedi un feedback scritto","Impara a dire un ‘no’ gentile"]},
+  3:{k:"Espressione • Creatività • Socialità",
+     plus:["Comunicazione vivida","Talento narrativo","Entusiasmo contagioso"],
+     minus:["Discontinuità e dispersione","Sovraesposizione"],
+     tips:["Scrivi ogni giorno 1 pagina","Taglia il superfluo del 20%","Programma un momento creativo fisso"]},
+  4:{k:"Ordine • Metodo • Concretezza",
+     plus:["Affidabilità e disciplina","Pensiero sistemico","Resilienza"],
+     minus:["Rigidità, perfezionismo","Paura del cambiamento"],
+     tips:["Lavora per blocchi di tempo","Concentrati sull’essenziale prima","Introduci piccoli miglioramenti quotidiani"]},
+  5:{k:"Libertà • Versatilità • Esperienza",
+     plus:["Adattabilità rapida","Curiosità esplorativa","Energia dinamica"],
+     minus:["Dispersività, impulsività","Difficoltà a mantenere routine"],
+     tips:["Fai uno sprint di 5 giorni su un tema","Limita i canali di attenzione","Stabilisci una micro-routine quotidiana"]},
+  6:{k:"Cura • Responsabilità • Equilibrio",
+     plus:["Senso del dovere","Attenzione agli altri","Gusto estetico"],
+     minus:["Sovraccarico di compiti","Controllo affettivo"],
+     tips:["Ritagliati 15 min per te stesso","Chiedi supporto a chi ti è vicino","Cura un dettaglio estetico"]},
+  7:{k:"Ricerca • Introspezione • Apprendimento",
+     plus:["Analisi profonda","Pensiero critico","Indipendenza"],
+     minus:["Eccesso di astrazione","Chiusura sociale"],
+     tips:["Studia 30 min al giorno","Condividi 1 insight a settimana","Pratica silenzio e passeggiate"]},
+  8:{k:"Azione • Autonomia • Pragmatismo",
+     plus:["Focus sui risultati","Gestione delle risorse","Coraggio decisionale"],
+     minus:["Workaholism","Visione solo utilitaristica"],
+     tips:["Definisci obiettivi trimestrali","Stabilisci un orario di stop","Riconosci i meriti altrui"]},
+  9:{k:"Visione • Idealismo • Servizio",
+     plus:["Ampia prospettiva","Empatia","Capacità di chiudere cicli"],
+     minus:["Disillusione","Spreco di energie"],
+     tips:["Scegli 1 causa concreta","Definisci i confini del tuo impegno","Pratica il lasciare andare"]},
+  11:{k:"Ispirazione • Visione elevata (Numero Maestro)",
+     plus:["Intuizioni profonde","Carisma sottile","Creatività spirituale"],
+     minus:["Sovraccarico nervoso","Autodubbio"],
+     tips:["Pratica radicamento","Trasforma le intuizioni in azioni concrete","Cerca mentoring o confronto"]},
+  22:{k:"Architetto • Realizzazione su vasta scala (Numero Maestro)",
+     plus:["Visione + esecuzione","Capacità di costruire strutture solide","Leadership di sistema"],
+     minus:["Pressione interna","Blocco da perfezionismo"],
+     tips:["Dividi il progetto in tappe","Prototipa subito","Documenta le decisioni"]},
+};
 
 // Temi dell’Anno Personale
-const YEAR_THEME = { /* ... invariato ... */ };
-
-function profileCard(label, n){
-  const c = CORE[n] || {};
-  const tag = (n===11||n===22) ? `<em>${c.k||""}</em>` : (c.k||"");
-  const plus = (c.plus||[]).map(x=>`<li>${x}</li>`).join("");
-  const minus = (c.minus||[]).map(x=>`<li>${x}</li>`).join("");
-  const tips = (c.tips||[]).map(x=>`<li>${x}</li>`).join("");
-  return `
-    <div class="profile-section">
-      <h4>${label}: <span class="chip">${n}</span> — ${tag}</h4>
-      <div class="profile-cols">
-        <div><strong>Punti di forza</strong><ul>${plus}</ul></div>
-        <div><strong>Sfide</strong><ul>${minus}</ul></div>
-        <div><strong>Suggerimenti</strong><ul>${tips}</ul></div>
-      </div>
-    </div>`;
-}
+const YEAR_THEME = {
+  1:"Nuovi inizi, energia di semina. Ottimo per lanciare progetti.",
+  2:"Relazioni e collaborazioni. Serve pazienza e ascolto.",
+  3:"Espressione e creatività. Ottimo per comunicare e farsi conoscere.",
+  4:"Struttura e fondamenta. È tempo di disciplina e organizzazione.",
+  5:"Cambiamenti e libertà. Occasioni di viaggio o sperimentazione.",
+  6:"Cura, casa, responsabilità. Consolidare e prendersi cura.",
+  7:"Studio, introspezione, ricerca. Momento di analisi.",
+  8:"Risultati e leadership. Focus su carriera e risorse.",
+  9:"Chiusure e rinnovamento. Tempo di lasciare andare e preparare il nuovo."
+};
 
 function renderProfile(fullname, dob, refISO){
   const lp = lifePathFromDate(dob);
