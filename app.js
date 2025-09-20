@@ -20,11 +20,11 @@ const shareBtn = $("#shareBtn");
 const profileBox = $("#profile");
 const profileText = $("#profileText");
 
+// --------- Init data ----------
 todayBtn.addEventListener("click", () => {
   const today = new Date();
   refDate.value = formatDateInput(today);
 });
-
 function formatDateInput(d) {
   const yyyy = d.getFullYear();
   const mm = String(d.getMonth()+1).padStart(2,'0');
@@ -33,7 +33,6 @@ function formatDateInput(d) {
 }
 
 // ---------------- Helper robusti ----------------
-// LocalStorage sicuro
 function lsGet(key, fallback="[]"){
   try { return localStorage.getItem(key) ?? fallback; }
   catch { return fallback; }
@@ -42,8 +41,6 @@ function lsSet(key, value){
   try { localStorage.setItem(key, value); return true; }
   catch { return false; }
 }
-
-// Copia testuale sicura
 async function copyTextSafe(text){
   if (navigator.clipboard && window.isSecureContext) {
     try { await navigator.clipboard.writeText(text); return true; }
@@ -72,7 +69,6 @@ function xorshift32(seed) {
     return (x >>> 0) / 4294967296;
   };
 }
-
 function hashToSeed(buf) {
   const view = new DataView(buf);
   let s = 0;
@@ -81,13 +77,11 @@ function hashToSeed(buf) {
   }
   return (s >>> 0) || 0x9e3779b9;
 }
-
 async function sha256(str) {
   const enc = new TextEncoder().encode(str);
   const buf = await crypto.subtle.digest("SHA-256", enc);
   return buf;
 }
-
 function pickUnique(rand, count, min, max) {
   const set = new Set();
   while (set.size < count) {
@@ -96,7 +90,6 @@ function pickUnique(rand, count, min, max) {
   }
   return Array.from(set).sort((a,b)=>a-b);
 }
-
 function generateFor(dateStr, name, dob, game) {
   const key = `${name.trim().toLowerCase()}|${dob}|${dateStr}|${game}`;
   return sha256(key).then(buf => {
@@ -118,7 +111,7 @@ function generateFor(dateStr, name, dob, game) {
   });
 }
 
-// ---------------- Numerologia (dettagliata) ----------------
+// ---------------- Numerologia (pitagorica) ----------------
 const PythMap = {
   A:1,B:2,C:3,D:4,E:5,F:6,G:7,H:8,I:9,
   J:1,K:2,L:3,M:4,N:5,O:6,P:7,Q:8,R:9,
@@ -130,11 +123,10 @@ function onlyLetters(s){ return (s||"").toUpperCase().normalize("NFD").replace(/
 function sumDigits(n){ return String(n).split("").reduce((a,c)=>a+Number(c),0); }
 function reduceNum(n){
   while (n > 22) n = sumDigits(n);
-  if (n === 11 || n === 22) return n;
+  if (n === 11 || n === 22) return n;     // numeri “maestri”
   while (n > 9) n = sumDigits(n);
   return n;
 }
-
 function lifePathFromDate(dob){
   const [y,m,d] = dob.split("-").map(Number);
   return reduceNum(sumDigits(y)+sumDigits(m)+sumDigits(d));
@@ -164,7 +156,7 @@ function personalityNumber(fullname){
   return reduceNum(total);
 }
 
-// Schede numeri principali: parola-chiave, punti di forza, rischi, consigli
+// Schede numeri principali
 const CORE = {
   1:{k:"Iniziativa • Identità • Guida",
      plus:["Determinazione e autonomia","Leadership naturale","Capacità di avviare progetti"],
@@ -224,6 +216,23 @@ const YEAR_THEME = {
   8:"Risultati e leadership. Focus su carriera e risorse.",
   9:"Chiusure e rinnovamento. Tempo di lasciare andare e preparare il nuovo."
 };
+
+function profileCard(label, n){
+  const c = CORE[n] || {};
+  const tag = (n===11||n===22) ? `<em>${c.k||""}</em>` : (c.k||"");
+  const plus = (c.plus||[]).map(x=>`<li>${x}</li>`).join("");
+  const minus = (c.minus||[]).map(x=>`<li>${x}</li>`).join("");
+  const tips = (c.tips||[]).map(x=>`<li>${x}</li>`).join("");
+  return `
+    <div class="profile-section">
+      <h4>${label}: <span class="chip">${n}</span> — ${tag}</h4>
+      <div class="profile-cols">
+        <div><strong>Punti di forza</strong><ul>${plus}</ul></div>
+        <div><strong>Sfide</strong><ul>${minus}</ul></div>
+        <div><strong>Suggerimenti</strong><ul>${tips}</ul></div>
+      </div>
+    </div>`;
+}
 
 function renderProfile(fullname, dob, refISO){
   const lp = lifePathFromDate(dob);
@@ -353,7 +362,7 @@ function paintHistory() {
   });
 }
 
-// --- Export / Clear / Share invariati ---
+// --- Export / Clear / Share ---
 exportBtn.addEventListener("click", () => {
   const data = lsGet("lottoai_history") || "[]";
   const blob = new Blob([data], {type:"application/json"});
@@ -374,7 +383,7 @@ clearBtn.addEventListener("click", () => {
 
 shareBtn.addEventListener("click", async () => {
   const url = location.href;
-  const text = "LottoAI — PWA con combinazioni personali e profilo numerologico (solo divertimento).";
+  const text = "LottoAI — combinazioni personali e profilo numerologico (solo divertimento).";
   if (navigator.share) {
     try { await navigator.share({title:"LottoAI", text, url}); } catch {}
   } else {
@@ -384,6 +393,6 @@ shareBtn.addEventListener("click", async () => {
   }
 });
 
-// init
+// --------- init ----------
 paintHistory();
 todayBtn.click();
